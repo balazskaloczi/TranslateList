@@ -1,21 +1,32 @@
 import {  useState, useEffect } from 'react';
+import {  Button, Grid, Select, InputLabel, MenuItem, Container, Typography, TextField } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+
+import useStyles from './styles';
+
 
 const axios = require('axios').default;
 const { v4: uuidv4 } = require('uuid');
 
-const word = 'Hello World!';
 
 
-function App() {
+const App = () => {
+  const classes = useStyles();
 
-const [responseData,setResponseData] = useState('');
-
+  const [word,setWord] = useState('');
+  const [responseData,setResponseData] = useState();
+  const [translatedWord,setTranslatedWord] = useState();
 
 
 useEffect(() => {
-  // const translation = responseData.reduce(
-  //   (obj, item) => Object.assign(obj, { [item.key]: item.value }), {});
-    console.log(responseData);
+
+  if(responseData) {
+    const obj = JSON.parse(responseData);
+    const translation = obj[0].translations[0].text;
+    setTranslatedWord(translation);
+  }
+
+  
 
 }, [responseData]);
 
@@ -42,19 +53,42 @@ axios({
         'to': 'de'
     },
     data: [{
-        'text': 'Hello World!'
+        'text': `${word}`
     }],
     responseType: 'json'
 }).then(function(response){
-    const data = JSON.stringify(response.data, null, 4);
+    const data = JSON.stringify(response.data);
     setResponseData(data);
 });
 
-
   return (
     <>
-      <h1>{word}</h1>
-      <h2>{responseData}</h2>
+    <Container fixed className={classes.main}>
+      <div>
+        <Typography variant="h1" color="primary">TranslateList</Typography>
+        <Typography variant="subtitle2" color="primary">Translate foreign words and add them to a list to memorize them ! </Typography>
+      </div>
+    </Container>
+    <form >
+        <Container className={classes.container}>
+              <InputLabel id="caption">Translate Something</InputLabel>
+                <TextField id="outlined-basic" variant="outlined"  labelId="caption" type="text" value={word} onChange={(e) => setWord(e.target.value)}/>
+                <TextField id="outlined-basic" variant="outlined"  type="text" value={translatedWord ? translatedWord : 'Translate something !'}/>
+                <Button variant="contained" color="primary">{AddIcon}</Button>
+              <Typography variant="subtitle1"  color="textPrimary" display="block"></Typography>
+            <div className={classes.options} spacing={6}>
+              <InputLabel id="fromLanguage">From</InputLabel>
+              <Select value={'English'} labelId="fromLanguage">
+                <MenuItem value={'English'}>English</MenuItem>
+              </Select>
+              <InputLabel id="toLanguage">To</InputLabel>
+              <Select  value={'German'} labelId="toLanguage">
+                <MenuItem value={'German'}>German</MenuItem>
+              </Select>
+              <Button variant="contained" color="primary" >Translate</Button>
+            </div>
+        </Container>
+      </form>
     </>
   );
 }
