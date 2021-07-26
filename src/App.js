@@ -1,6 +1,10 @@
 import {  useState, useEffect } from 'react';
-import {  Button, Grid, Select, InputLabel, MenuItem, Container, Typography, TextField } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
+import {  Button, Grid, Select, InputLabel, MenuItem, Container, Typography, TextField, CssBaseline } from '@material-ui/core';
+import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
+
+import Data from './languageData.json';
+
+
 
 import useStyles from './styles';
 
@@ -11,24 +15,31 @@ const { v4: uuidv4 } = require('uuid');
 
 
 const App = () => {
+
+  const languages = Object.entries(Data);
+
   const classes = useStyles();
 
   const [word,setWord] = useState('');
   const [responseData,setResponseData] = useState();
   const [translatedWord,setTranslatedWord] = useState();
-
+  const [toLanguage,setToLanguage] = useState();
+  const [fromLanguage,setFromLanguage] = useState();
 
 useEffect(() => {
-
   if(responseData) {
     const obj = JSON.parse(responseData);
     const translation = obj[0].translations[0].text;
     setTranslatedWord(translation);
   }
-
-  
-
 }, [responseData]);
+
+
+useEffect(()=> {
+  console.log(fromLanguage);
+  console.log(toLanguage);
+}, [fromLanguage,toLanguage])
+
 
 var subscriptionKey = "8e32e7b441f74185a2630cd229ed91f7";
 var endpoint = "https://api.cognitive.microsofttranslator.com";
@@ -49,8 +60,8 @@ axios({
     },
     params: {
         'api-version': '3.0',
-        'from': 'en',
-        'to': 'de'
+        'from': `${fromLanguage ? fromLanguage : 'en'}`,
+        'to': `${toLanguage ? toLanguage : 'it'}`
     },
     data: [{
         'text': `${word}`
@@ -62,34 +73,53 @@ axios({
 });
 
   return (
-    <>
+    <Container className={classes.wrapper}>
+    <CssBaseline />
     <Container fixed className={classes.main}>
       <div>
         <Typography variant="h1" color="primary">TranslateList</Typography>
-        <Typography variant="subtitle2" color="primary">Translate foreign words and add them to a list to memorize them ! </Typography>
+        <Typography variant="subtitle2" color="primary">Translate foreign words then add them to a list to memorize them ! </Typography>
       </div>
     </Container>
     <form >
         <Container className={classes.container}>
-              <InputLabel id="caption">Translate Something</InputLabel>
-                <TextField id="outlined-basic" variant="outlined"  labelId="caption" type="text" value={word} onChange={(e) => setWord(e.target.value)}/>
-                <TextField id="outlined-basic" variant="outlined"  type="text" value={translatedWord ? translatedWord : 'Translate something !'}/>
-                <Button variant="contained" color="primary">{AddIcon}</Button>
-              <Typography variant="subtitle1"  color="textPrimary" display="block"></Typography>
-            <div className={classes.options} spacing={6}>
-              <InputLabel id="fromLanguage">From</InputLabel>
-              <Select value={'English'} labelId="fromLanguage">
-                <MenuItem value={'English'}>English</MenuItem>
+            <Container className={classes.inputs}>
+                <TextField
+                className={classes.input}   
+                multiline rows={7}
+                 id="outlined-basic" 
+                 variant="outlined"
+                    type="text" 
+                    value={word} onChange={(e) => setWord(e.target.value)}
+                    label="From"
+                    />
+                <TextField
+                className={classes.input} 
+                 multiline rows={7}
+                  id="outlined-basic"
+                   variant="outlined"
+                     type="text" 
+                     label="To"
+                     value={translatedWord ? translatedWord : ''}
+                     />
+                <Button variant="contained" color="primary"><AddBoxOutlinedIcon /></Button>
+            </Container>
+            <Container className={classes.options} spacing={6}>
+              <Select variant="outlined" value={fromLanguage ? fromLanguage : 'en'} onChange={(e) => setFromLanguage(e.target.value)}>
+                {languages.map((language,index) => (
+                  <MenuItem key={index} value={language[1]}>{language[0]}</MenuItem>
+                ))}
               </Select>
-              <InputLabel id="toLanguage">To</InputLabel>
-              <Select  value={'German'} labelId="toLanguage">
-                <MenuItem value={'German'}>German</MenuItem>
+              <Select variant="outlined" value={toLanguage ? toLanguage : 'it'} onChange={(e) => setToLanguage(e.target.value)}>
+                {languages.map((language,index) => (
+                  <MenuItem key={index} value={language[1]}>{language[0]}</MenuItem>
+                ))}
               </Select>
-              <Button variant="contained" color="primary" >Translate</Button>
-            </div>
+              <Button className={classes.translateButton} variant="contained" color="primary" >Translate</Button>
+            </Container>
         </Container>
       </form>
-    </>
+    </Container>
   );
 }
 

@@ -1,19 +1,30 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
+    wrapper: {
+        display: 'flex',
+        justifyContent: 'center',
+        flexDirection: 'column'
+    },
     main: {
-      display: 'flex',
-      justifyContent: 'center',
       textAlign: 'center',
       marginBottom: '120px'
     },
     options: {
         display: 'flex',
-        padding: '5%'
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     container: {
         display: 'flex',
         justifyContent: 'center'
+    },
+    inputs :{
+        display:'flex',
+        justifyContent:'center',
+    },
+    translateButton: {
+        padding: '15.8px'
     }
   });
 
