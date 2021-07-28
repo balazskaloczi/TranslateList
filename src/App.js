@@ -1,6 +1,7 @@
 import {  useState, useEffect } from 'react';
-import {  Button, Grid, Select, InputLabel, MenuItem, Container, Typography, TextField, CssBaseline } from '@material-ui/core';
+import {  Button, Grid, Select, MenuItem, Container, Typography, TextField, CssBaseline} from '@material-ui/core';
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
+import SwapHorizontalCircleOutlinedIcon from '@material-ui/icons/SwapHorizontalCircleOutlined';
 
 import Data from './languageData.json';
 
@@ -75,16 +76,38 @@ axios({
   return (
     <Container className={classes.wrapper}>
     <CssBaseline />
-    <Container fixed className={classes.main}>
-      <div>
-        <Typography variant="h1" color="primary">TranslateList</Typography>
-        <Typography variant="subtitle2" color="primary">Translate foreign words then add them to a list to memorize them ! </Typography>
-      </div>
+    <Container >
+      <Grid xs={12} fixed className={classes.main} justifyContent="center" alignItems="center">
+        <Typography variant="h3" color="primary">TranslateList</Typography>
+        <Typography variant="subtitle3" color="textSecondary">Translate foreign words then add them to a list to memorize them ! </Typography>
+      </Grid>
     </Container>
-    <form >
-        <Container className={classes.container}>
-            <Container className={classes.inputs}>
-                <TextField
+        <Grid  className={classes.options} container spacing={2}  container
+          direction="row"
+          justifyContent="space-around"
+          alignItems="center">
+          <Grid item xs sm={5}>
+              <Select  className={classes.select} variant="outlined" value={fromLanguage ? fromLanguage : 'en'} onChange={(e) => setFromLanguage(e.target.value)}>
+                {languages.map((language,index) => (
+                  <MenuItem key={index} value={language[1]}>{language[0]}</MenuItem>
+                ))}
+              </Select>
+          </Grid>
+          <Grid item xs={3} sm={2}>
+            <Button className={classes.switchButton}  variant="outlined" color="primary" fullWidth><SwapHorizontalCircleOutlinedIcon/></Button>
+          </Grid>
+          <Grid item xs sm={5}>
+             <Select className={classes.select} variant="outlined" value={toLanguage ? toLanguage : 'it'} onChange={(e) => setToLanguage(e.target.value)}>
+              {languages.map((language,index) => (
+                 <MenuItem key={index} value={language[1]}>{language[0]}</MenuItem>
+              ))}
+            </Select>
+           </Grid>
+        </Grid>
+        <Grid  justifyContent="center"
+               alignItems="center" container spacing={2}>
+          <Grid  item xs={12} sm={6}>
+              <TextField
                 className={classes.input}   
                 multiline rows={7}
                  id="outlined-basic" 
@@ -93,7 +116,10 @@ axios({
                     value={word} onChange={(e) => setWord(e.target.value)}
                     label="From"
                     />
+              </Grid>
+              <Grid  item xs={12} sm={6}>
                 <TextField
+                disabled
                 className={classes.input} 
                  multiline rows={7}
                   id="outlined-basic"
@@ -102,23 +128,9 @@ axios({
                      label="To"
                      value={translatedWord ? translatedWord : ''}
                      />
-                <Button variant="contained" color="primary"><AddBoxOutlinedIcon /></Button>
-            </Container>
-            <Container className={classes.options} spacing={6}>
-              <Select variant="outlined" value={fromLanguage ? fromLanguage : 'en'} onChange={(e) => setFromLanguage(e.target.value)}>
-                {languages.map((language,index) => (
-                  <MenuItem key={index} value={language[1]}>{language[0]}</MenuItem>
-                ))}
-              </Select>
-              <Select variant="outlined" value={toLanguage ? toLanguage : 'it'} onChange={(e) => setToLanguage(e.target.value)}>
-                {languages.map((language,index) => (
-                  <MenuItem key={index} value={language[1]}>{language[0]}</MenuItem>
-                ))}
-              </Select>
-              <Button className={classes.translateButton} variant="contained" color="primary" >Translate</Button>
-            </Container>
-        </Container>
-      </form>
+                </Grid>
+                {/* <Button variant="contained" color="primary"><AddBoxOutlinedIcon /></Button> */}
+        </Grid>
     </Container>
   );
 }
