@@ -7,6 +7,7 @@ const useStyles = makeStyles({
     main: {
       textAlign: 'center',
       marginBottom: '80px',
+      flexDirection: 'column'
     },
     options: {
         display: 'flex',
@@ -27,9 +28,6 @@ const useStyles = makeStyles({
     },
     select: {
         width: '100%',
-    },
-    switchButton: {
-        height: '100%'
     }
 
   });
