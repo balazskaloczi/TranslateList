@@ -2,6 +2,7 @@ import {  useState, useEffect } from 'react';
 import {  Button, Grid, Select, MenuItem, Container, Typography, TextField, CssBaseline,InputLabel} from '@material-ui/core';
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
 import SwapHorizontalCircleOutlinedIcon from '@material-ui/icons/SwapHorizontalCircleOutlined';
+import TranslateListItem from './TranslateListItem'
 
 import Data from './languageData.json';
 
@@ -16,14 +17,32 @@ const { v4: uuidv4 } = require('uuid');
 
 
 const App = () => {
+
+  let dummyObj = {
+    from: 'English',
+    to: 'Hungarian',
+    fromText: 'banana',
+    translatedText: 'banán'
+  }
+
+  const storeData = async ()  =>  {
+    let stringData = JSON.stringify(dummyObj);
+    await localStorage.setItem('translation',stringData);
+    console.log(localStorage.translation)
+    let objData = await JSON.parse(localStorage.translation)
+    await setTranslateList(objData);
+    console.log(translateList);
+  }
+
   const languages = Object.entries(Data);
   const classes = useStyles();
 
   const [word,setWord] = useState('');
   const [responseData,setResponseData] = useState();
-  const [translatedWord,setTranslatedWord] = useState();
+  const [translatedWord,setTranslatedWord] = useState('');
   const [toLanguage,setToLanguage] = useState();
   const [fromLanguage,setFromLanguage] = useState();
+  const [translateList,setTranslateList] = useState();
 
 useEffect(() => {
   if(responseData) {
@@ -33,7 +52,15 @@ useEffect(() => {
   }
 }, [responseData]);
 
-const switchLanguage= () => {
+useEffect(() => {
+  if(translateList) {
+    console.log(translateList)
+    console.log(translateList.from)
+    console.log(translateList.to)
+  }
+}, [translateList]);
+
+const switchLanguage = () => {
   if(fromLanguage && toLanguage && word) {
     let from = fromLanguage;
     let to = toLanguage;
@@ -91,24 +118,24 @@ axios({
         <Typography variant="caption" color="textSecondary">Translate foreign words then add them to a list to memorize them ! </Typography>
       </Grid>
     </Container>
-        <Grid  className={classes.options} container spacing={1} 
+        <Grid  className={classes.options} container spacing={3} 
           direction="row"
           justifyContent="space-around"
           alignItems="center">
-          <Grid item xs sm={5}>
-              {/* <InputLabel shrink id="from">From</InputLabel> */}
+          <Grid item xs={12} sm={12} md={5}>
+              <InputLabel shrink id="from">From</InputLabel>
               <Select className={classes.select} labelId="from" variant="outlined" value={fromLanguage ? fromLanguage : 'en'} onChange={(e) => setFromLanguage(e.target.value)}>
                 {languages.map((language,index) => (
                   <MenuItem key={index} value={language[1]}>{language[0]}</MenuItem>
                 ))}
               </Select>
           </Grid>
-          <Grid item xs={3} sm={2}>
+          <Grid item xs={4} sm={6} md={2}>
             <CssBaseline />
             <Button className={classes.switchButton}  onClick={switchLanguage}variant="outlined" color="primary" fullWidth><SwapHorizontalCircleOutlinedIcon/></Button>
           </Grid>
-          <Grid item xs sm={5}>
-            {/* <InputLabel shrink id="to">To</InputLabel> */}
+          <Grid item xs={12} sm={12} md={5}>
+            <InputLabel shrink id="to">To</InputLabel>
               <Select className={classes.select} labelId="to" variant="outlined" value={toLanguage ? toLanguage : 'hu'} onChange={(e) => setToLanguage(e.target.value)}>
               {languages.map((language,index) => (
                  <MenuItem key={index} value={language[1]}>{language[0]}</MenuItem>
@@ -141,8 +168,15 @@ axios({
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                  <Button variant="contained" color="primary" fullWidth><AddBoxOutlinedIcon /></Button>
+                  <Button variant="contained" color="primary" onClick={storeData} fullWidth><AddBoxOutlinedIcon /></Button>
               </Grid>
+        </Grid>
+        <Grid container direction="row" justifyContent="space-around" alignItems="center" spacing={3}>
+          {!translateList ?
+            <Grid item>
+              <Typography> Add translation to the list with the + Button !</Typography>
+            </Grid>   :
+            <TranslateListItem translatetext={translateList.fromText} translatedtext={translateList.translatedText} from={translateList.from} to={translateList.to} /> }
         </Grid>
     </Container>
   );
