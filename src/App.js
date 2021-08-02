@@ -18,21 +18,41 @@ const { v4: uuidv4 } = require('uuid');
 
 const App = () => {
 
-  let dummyObj = {
-    from: 'English',
-    to: 'Hungarian',
-    fromText: 'banana',
-    translatedText: 'banán'
-  }
+  // let dummyObj = {
+  //   from: 'English',
+  //   to: 'Hungarian',
+  //   fromText: 'banana',
+  //   translatedText: 'banán'
+  // }
 
-  const storeData = async ()  =>  {
-    let stringData = JSON.stringify(dummyObj);
+  // const storeData = async ()  =>  {
+  //   let stringData = JSON.stringify(dummyObj);
+  //   await localStorage.setItem('translation',stringData);
+  //   console.log(localStorage.translation)
+  //   let objData = await JSON.parse(localStorage.translation)
+  //   await setTranslateList(objData);
+  //   console.log(translateList);
+  // }
+
+  const createListItem = async () => {
+    console.log()
+    let data = `{"from":"${fromLanguage}","to":"${toLanguage}","fromText":"${word}","translatedText":"${translatedWord}"}`;
+    console.log(data)
+    let stringData = JSON.stringify(data);
     await localStorage.setItem('translation',stringData);
-    console.log(localStorage.translation)
+    console.log(stringData)
     let objData = await JSON.parse(localStorage.translation)
     await setTranslateList(objData);
-    console.log(translateList);
+    console.log(objData)
   }
+
+  const indexer =  (language) => {
+    for (let i = language; i < languages.length; i++) {
+      if (language = languages[i][1])
+      {return languages[i][0]}
+    }
+  }
+
 
   const languages = Object.entries(Data);
   const classes = useStyles();
@@ -40,8 +60,8 @@ const App = () => {
   const [word,setWord] = useState('');
   const [responseData,setResponseData] = useState();
   const [translatedWord,setTranslatedWord] = useState('');
-  const [toLanguage,setToLanguage] = useState();
-  const [fromLanguage,setFromLanguage] = useState();
+  const [toLanguage,setToLanguage] = useState('hu');
+  const [fromLanguage,setFromLanguage] = useState('en');
   const [translateList,setTranslateList] = useState();
 
 useEffect(() => {
@@ -55,6 +75,7 @@ useEffect(() => {
 useEffect(() => {
   if(translateList) {
     console.log(translateList)
+    indexer(translateList.from)
     console.log(translateList.from)
     console.log(translateList.to)
   }
@@ -71,10 +92,14 @@ const switchLanguage = () => {
     setWord(translated);
     setTranslatedWord(toBeTranslated);
 } else {
-  setFromLanguage('hu');
-  setToLanguage('en');
-  setWord(translatedWord);
-  setTranslatedWord(word);
+  let from = fromLanguage;
+  let to = toLanguage;
+  let toBeTranslated = word;
+  let translated = translatedWord;
+  setFromLanguage(to);
+  setToLanguage(from);
+  setWord(translated);
+  setTranslatedWord(toBeTranslated);
   }
 }
 
@@ -168,7 +193,7 @@ axios({
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                  <Button variant="contained" color="primary" onClick={storeData} fullWidth><AddBoxOutlinedIcon /></Button>
+                  <Button variant="contained" color="primary" onClick={createListItem} fullWidth><AddBoxOutlinedIcon /></Button>
               </Grid>
         </Grid>
         <Grid container direction="row" justifyContent="space-around" alignItems="center" spacing={3}>
@@ -176,7 +201,8 @@ axios({
             <Grid item>
               <Typography> Add translation to the list with the + Button !</Typography>
             </Grid>   :
-            <TranslateListItem translatetext={translateList.fromText} translatedtext={translateList.translatedText} from={translateList.from} to={translateList.to} /> }
+            <TranslateListItem translatetext={translateList.fromText} translatedtext={translateList.translatedText} from={translateList.from} to={translateList.to} /> 
+            }
         </Grid>
     </Container>
   );
