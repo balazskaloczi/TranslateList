@@ -23,11 +23,11 @@ const useStyles = makeStyles({
     input :{
         width: '100%'
     },
-    translateButton: {
-        padding: '15.8px'
-    },
     select: {
         width: '100%',
+    },
+    switchButton: {
+        height: '100%'
     }
 
   });

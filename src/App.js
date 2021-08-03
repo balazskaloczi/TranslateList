@@ -1,5 +1,5 @@
 import {  useState, useEffect } from 'react';
-import {  Button, Grid, Select, MenuItem, Container, Typography, TextField, CssBaseline,InputLabel} from '@material-ui/core';
+import {  Button, Grid, Select, MenuItem, Container, Typography, TextField, CssBaseline} from '@material-ui/core';
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
 import SwapHorizontalCircleOutlinedIcon from '@material-ui/icons/SwapHorizontalCircleOutlined';
 import TranslateListItem from './TranslateListItem'
@@ -35,23 +35,20 @@ const App = () => {
   // }
 
   const createListItem = async () => {
-    console.log()
-    let data = `{"from":"${fromLanguage}","to":"${toLanguage}","fromText":"${word}","translatedText":"${translatedWord}"}`;
-    console.log(data)
+    let data = `{"from":"${indexer(fromLanguage)}","to":"${indexer(toLanguage)}","fromText":"${word}","translatedText":"${translatedWord}"}`;
     let stringData = JSON.stringify(data);
     await localStorage.setItem('translation',stringData);
-    console.log(stringData)
-    let objData = await JSON.parse(localStorage.translation)
-    await setTranslateList(objData);
-    console.log(objData)
+    let objData = JSON.parse(localStorage.translation);
+    setTranslateList(objData);
   }
 
-  const indexer =  (language) => {
-    for (let i = language; i < languages.length; i++) {
-      if (language = languages[i][1])
-      {return languages[i][0]}
-    }
-  }
+const indexer = (search) => {
+	  for (const [key, value] of Object.entries(Data)) {
+  		if(value === search) {
+		    return key
+			} 
+	}
+}
 
 
   const languages = Object.entries(Data);
@@ -62,7 +59,7 @@ const App = () => {
   const [translatedWord,setTranslatedWord] = useState('');
   const [toLanguage,setToLanguage] = useState('hu');
   const [fromLanguage,setFromLanguage] = useState('en');
-  const [translateList,setTranslateList] = useState();
+  const [translateList,setTranslateList] = useState('');
 
 useEffect(() => {
   if(responseData) {
@@ -72,12 +69,9 @@ useEffect(() => {
   }
 }, [responseData]);
 
-useEffect(() => {
+useEffect( async () => {
   if(translateList) {
-    console.log(translateList)
-    indexer(translateList.from)
-    console.log(translateList.from)
-    console.log(translateList.to)
+    await setTranslateList(JSON.parse(translateList))
   }
 }, [translateList]);
 
@@ -85,21 +79,19 @@ const switchLanguage = () => {
   if(fromLanguage && toLanguage && word) {
     let from = fromLanguage;
     let to = toLanguage;
-    let toBeTranslated = word;
+    //  let toBeTranslated = word;
     let translated = translatedWord;
     setFromLanguage(to);
     setToLanguage(from);
     setWord(translated);
-    setTranslatedWord(toBeTranslated);
 } else {
   let from = fromLanguage;
   let to = toLanguage;
-  let toBeTranslated = word;
+  // // let toBeTranslated = word;   Not needed ,because only the toBeTranslated text is enough for the translator to work
   let translated = translatedWord;
   setFromLanguage(to);
   setToLanguage(from);
   setWord(translated);
-  setTranslatedWord(toBeTranslated);
   }
 }
 
@@ -148,7 +140,7 @@ axios({
           justifyContent="space-around"
           alignItems="center">
           <Grid item xs={12} sm={12} md={5}>
-              <InputLabel shrink id="from">From</InputLabel>
+              {/* <InputLabel shrink id="from">From</InputLabel> */}
               <Select className={classes.select} labelId="from" variant="outlined" value={fromLanguage ? fromLanguage : 'en'} onChange={(e) => setFromLanguage(e.target.value)}>
                 {languages.map((language,index) => (
                   <MenuItem key={index} value={language[1]}>{language[0]}</MenuItem>
@@ -157,10 +149,10 @@ axios({
           </Grid>
           <Grid item xs={4} sm={6} md={2}>
             <CssBaseline />
-            <Button className={classes.switchButton}  onClick={switchLanguage}variant="outlined" color="primary" fullWidth><SwapHorizontalCircleOutlinedIcon/></Button>
+            <Button className={classes.switchButton}  onClick={switchLanguage}  color="primary" fullWidth><SwapHorizontalCircleOutlinedIcon/></Button>
           </Grid>
           <Grid item xs={12} sm={12} md={5}>
-            <InputLabel shrink id="to">To</InputLabel>
+            {/* <InputLabel shrink id="to">To</InputLabel> */}
               <Select className={classes.select} labelId="to" variant="outlined" value={toLanguage ? toLanguage : 'hu'} onChange={(e) => setToLanguage(e.target.value)}>
               {languages.map((language,index) => (
                  <MenuItem key={index} value={language[1]}>{language[0]}</MenuItem>
@@ -199,7 +191,7 @@ axios({
         <Grid container direction="row" justifyContent="space-around" alignItems="center" spacing={3}>
           {!translateList ?
             <Grid item>
-              <Typography> Add translation to the list with the + Button !</Typography>
+              <Typography> Add translation to the list with the <AddBoxOutlinedIcon  fontSize="small" color="primary"/> Button !</Typography>
             </Grid>   :
             <TranslateListItem translatetext={translateList.fromText} translatedtext={translateList.translatedText} from={translateList.from} to={translateList.to} /> 
             }
