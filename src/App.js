@@ -59,7 +59,8 @@ const indexer = (search) => {
   const [translatedWord,setTranslatedWord] = useState('');
   const [toLanguage,setToLanguage] = useState('hu');
   const [fromLanguage,setFromLanguage] = useState('en');
-  const [translateList,setTranslateList] = useState('');
+  const [translateListItem,setTranslateListItem] = useState([]);
+  const [translateList,setTranslateList] = useState();
 
 useEffect(() => {
   if(responseData) {
@@ -69,10 +70,16 @@ useEffect(() => {
   }
 }, [responseData]);
 
-useEffect( async () => {
-  if(translateList) {
-    await setTranslateList(JSON.parse(translateList))
+useEffect(() => {
+  async function dataToJSON() {
+      if(translateList) {
+        await setTranslateList(JSON.parse(translateList))
+        setTranslateListItem([...translateListItem , JSON.parse(translateList)])
+        console.log(translateListItem)
+        console.log(typeof translateListItem)
+      }
   }
+  dataToJSON();
 }, [translateList]);
 
 const switchLanguage = () => {
@@ -193,8 +200,10 @@ axios({
             <Grid item>
               <Typography> Add translation to the list with the <AddBoxOutlinedIcon  fontSize="small" color="primary"/> Button !</Typography>
             </Grid>   :
-            <TranslateListItem translatetext={translateList.fromText} translatedtext={translateList.translatedText} from={translateList.from} to={translateList.to} /> 
-            }
+            translateListItem.map((e) => 
+            <TranslateListItem translatetext={e.fromText} translatedtext={e.translatedText} from={e.from} to={e.to} /> 
+            )
+          }
         </Grid>
     </Container>
   );
