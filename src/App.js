@@ -18,39 +18,6 @@ const { v4: uuidv4 } = require('uuid');
 
 const App = () => {
 
-  // let dummyObj = {
-  //   from: 'English',
-  //   to: 'Hungarian',
-  //   fromText: 'banana',
-  //   translatedText: 'banán'
-  // }
-
-  // const storeData = async ()  =>  {
-  //   let stringData = JSON.stringify(dummyObj);
-  //   await localStorage.setItem('translation',stringData);
-  //   console.log(localStorage.translation)
-  //   let objData = await JSON.parse(localStorage.translation)
-  //   await setTranslateList(objData);
-  //   console.log(translateList);
-  // }
-
-  const createListItem = async () => {
-    let data = `{"from":"${indexer(fromLanguage)}","to":"${indexer(toLanguage)}","fromText":"${word}","translatedText":"${translatedWord}"}`;
-    let stringData = JSON.stringify(data);
-    await localStorage.setItem('translation',stringData);
-    let objData = JSON.parse(localStorage.translation);
-    setTranslateList(objData);
-  }
-
-const indexer = (search) => {
-	  for (const [key, value] of Object.entries(Data)) {
-  		if(value === search) {
-		    return key
-			} 
-	}
-}
-
-
   const languages = Object.entries(Data);
   const classes = useStyles();
 
@@ -61,6 +28,23 @@ const indexer = (search) => {
   const [fromLanguage,setFromLanguage] = useState('en');
   const [translateListItem,setTranslateListItem] = useState([]);
   const [translateList,setTranslateList] = useState();
+
+  const createListItem = async () => {
+    let data = `{"from":"${indexer(fromLanguage)}","to":"${indexer(toLanguage)}","fromText":"${word}","translatedText":"${translatedWord}"}`;
+    console.log(typeof data)
+    // let stringData = JSON.stringify(data);
+    // await localStorage.setItem('translation',stringData);
+    // let objData = JSON.parse(localStorage.translation);
+    setTranslateList(data);
+  }
+
+  const indexer = (search) => {
+      for (const [key, value] of Object.entries(Data)) {
+        if(value === search) {
+          return key
+        } 
+    }
+  }
 
 useEffect(() => {
   if(responseData) {
@@ -74,12 +58,25 @@ useEffect(() => {
   async function dataToJSON() {
       if(translateList) {
         await setTranslateListItem([...translateListItem , JSON.parse(translateList)])
-        console.log(translateListItem)
-        console.log(typeof translateListItem)
+        // console.log(typeof translateListItem)
+        // console.log(typeof translateListItem[0])
+        let stringData = JSON.stringify(translateListItem);
+        await localStorage.setItem('translation',stringData);
       }
   }
   dataToJSON();
-}, [translateList,translateListItem]);
+}, [translateList]);
+
+useEffect(() => {
+  const data = localStorage.getItem('translation');
+  if (data) {
+    setTranslateListItem(JSON.parse(data))
+  }
+},[])
+
+useEffect(() => {
+  localStorage.setItem('translation',JSON.stringify(translateListItem));
+},[translateListItem])
 
 const switchLanguage = () => {
   if(fromLanguage && toLanguage && word) {
@@ -104,8 +101,6 @@ const switchLanguage = () => {
 var subscriptionKey = process.env.REACT_APP_SUBSCRIPTION_KEY;
 var endpoint = "https://api.cognitive.microsofttranslator.com";
 
-// Add your location, also known as region. The default is global.
-// This is required if using a Cognitive Services resource.
 var location = "westeurope";
 
 axios({
@@ -195,7 +190,7 @@ axios({
               </Grid>
         </Grid>
         <Grid container direction="row" justifyContent="space-around" alignItems="center" spacing={3}>
-          {!translateList ?
+          {!translateListItem ?
             <Grid item>
               <Typography> Add translation to the list with the <AddBoxOutlinedIcon  fontSize="small" color="primary"/> Button !</Typography>
             </Grid>   :
