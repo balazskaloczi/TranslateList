@@ -4,7 +4,7 @@ import {  Grid,Typography } from '@material-ui/core';
 const TranslateListItem = ({ from, to , translatetext , translatedtext}) => {
     return (
     <>
-    <Grid item xs={6} alignItems="center" justifyContent="center">
+    <Grid item xs={6} >
         <Typography variant="caption">{`From:${from}`}</Typography>
         <Typography variant="body1">{translatetext}</Typography>
     </Grid>

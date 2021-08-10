@@ -73,14 +73,13 @@ useEffect(() => {
 useEffect(() => {
   async function dataToJSON() {
       if(translateList) {
-        await setTranslateList(JSON.parse(translateList))
-        setTranslateListItem([...translateListItem , JSON.parse(translateList)])
+        await setTranslateListItem([...translateListItem , JSON.parse(translateList)])
         console.log(translateListItem)
         console.log(typeof translateListItem)
       }
   }
   dataToJSON();
-}, [translateList]);
+}, [translateList,translateListItem]);
 
 const switchLanguage = () => {
   if(fromLanguage && toLanguage && word) {
@@ -167,7 +166,7 @@ axios({
             </Select>
            </Grid>
         </Grid>
-        <Grid  justifyContent="center" alignItems="center" container spacing={2}>
+        <Grid  container justifyContent="center" alignItems="center"  spacing={2}>
           <Grid  item xs={12} sm={6}>
               <TextField
                   className={classes.input}   
@@ -200,8 +199,8 @@ axios({
             <Grid item>
               <Typography> Add translation to the list with the <AddBoxOutlinedIcon  fontSize="small" color="primary"/> Button !</Typography>
             </Grid>   :
-            translateListItem.map((e) => 
-            <TranslateListItem translatetext={e.fromText} translatedtext={e.translatedText} from={e.from} to={e.to} /> 
+            translateListItem.map((e,index) => 
+            <TranslateListItem key={index} translatetext={e.fromText} translatedtext={e.translatedText} from={e.from} to={e.to} /> 
             )
           }
         </Grid>
