@@ -26,7 +26,7 @@ const App = () => {
 
   const createListItem = async () => {
     let data = `{"from":"${indexer(fromLanguage)}","to":"${indexer(toLanguage)}","fromText":"${word}","translatedText":"${translatedWord}"}`;
-    settranslateListItem(data);
+    await settranslateListItem(data);
   }
 
   
@@ -49,14 +49,10 @@ useEffect(() => {
 
 
 useEffect(() => {
-  async function dataToJSON() {
       if(translateListItem) {
-        await settranslateList([...translateList , JSON.parse(translateListItem)])
-        let stringData = JSON.stringify(translateList);
-        await localStorage.setItem('translation',stringData);
+        settranslateList([...translateList , JSON.parse(translateListItem)])
+        settranslateListItem(null);
       }
-  }
-  dataToJSON();
 }, [translateListItem,translateList]);
 
 useEffect(() => {
@@ -67,7 +63,9 @@ useEffect(() => {
 },[])
 
 useEffect(() => {
-  localStorage.setItem('translation',JSON.stringify(translateList));
+  if(translateList) {
+    localStorage.setItem('translation',JSON.stringify(translateList));
+  }
 },[translateList])
 
 const switchLanguage = () => {
