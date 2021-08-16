@@ -115,7 +115,7 @@ axios({
     <CssBaseline />
     <Container>
       <Grid container className={classes.main} justifyContent="center" alignItems="center" flexdirection="column">
-        <Typography variant="h3" color="primary">translateListItem</Typography>
+        <Typography variant="h3" color="primary">TranslateList</Typography>
         <Typography variant="caption" color="textSecondary">Translate foreign words then add them to a list to memorize them ! </Typography>
       </Grid>
     </Container>
