@@ -26,17 +26,10 @@ const App = () => {
 
   const createListItem = async () => {
     let data = `{"from":"${indexer(fromLanguage)}","to":"${indexer(toLanguage)}","fromText":"${word}","translatedText":"${translatedWord}"}`;
-    console.log(typeof data)
     setTranslateList(data);
   }
 
-
-  // const deleteListItem = translateListItem.filter((element, index) => {
-  //   if (element === element[index]) {
-  //     translateListItem.splice(element)
-  //   }
-  //   return element
-  // })
+  
 
   const indexer = (search) => {
       for (const [key, value] of Object.entries(Data)) {
@@ -54,6 +47,7 @@ useEffect(() => {
   }
 }, [responseData]);
 
+
 useEffect(() => {
   async function dataToJSON() {
       if(translateList) {
@@ -63,7 +57,7 @@ useEffect(() => {
       }
   }
   dataToJSON();
-}, [translateList]);
+}, [translateList,translateListItem]);
 
 useEffect(() => {
   const data = localStorage.getItem('translation');
@@ -77,7 +71,7 @@ useEffect(() => {
 },[translateListItem])
 
 const switchLanguage = () => {
-  if(fromLanguage && toLanguage && word) {
+  if(fromLanguage && toLanguage ) {
     let from = fromLanguage;
     let to = toLanguage;
     let translated = translatedWord;

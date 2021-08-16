@@ -10,7 +10,6 @@ const TranslateListItem = ({ from, to , translatetext , translatedtext , transla
 
     const deleteItem = (item, id) => {
         setTranslateListItem(translateListItem.filter(item => translateListItem.indexOf(item) !== id))
-        console.log(translateListItem);
      }
 
     return (
