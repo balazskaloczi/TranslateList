@@ -1,15 +1,15 @@
 import React from 'react'
-import {  Grid,Typography,Button } from '@material-ui/core';
+import { Grid,Typography,Button } from '@material-ui/core';
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 
 import useStyles from './styles';
 
-const TranslateListItem = ({ from, to , translatetext , translatedtext , translateListItem, id, setTranslateListItem}) => {
+const TranslateListItem = ({ from, to , translatetext , translatedtext , translateList, id, settranslateList}) => {
 
     const classes = useStyles();
 
     const deleteItem = (item, id) => {
-        setTranslateListItem(translateListItem.filter(item => translateListItem.indexOf(item) !== id))
+        settranslateList(translateList.filter(item => translateList.indexOf(item) !== id))
      }
 
     return (

@@ -21,12 +21,12 @@ const App = () => {
   const [translatedWord,setTranslatedWord] = useState('');
   const [toLanguage,setToLanguage] = useState('hu');
   const [fromLanguage,setFromLanguage] = useState('en');
-  const [translateListItem,setTranslateListItem] = useState([]);
-  const [translateList,setTranslateList] = useState();
+  const [translateList,settranslateList] = useState([]);
+  const [translateListItem,settranslateListItem] = useState();
 
   const createListItem = async () => {
     let data = `{"from":"${indexer(fromLanguage)}","to":"${indexer(toLanguage)}","fromText":"${word}","translatedText":"${translatedWord}"}`;
-    setTranslateList(data);
+    settranslateListItem(data);
   }
 
   
@@ -50,25 +50,25 @@ useEffect(() => {
 
 useEffect(() => {
   async function dataToJSON() {
-      if(translateList) {
-        await setTranslateListItem([...translateListItem , JSON.parse(translateList)])
-        let stringData = JSON.stringify(translateListItem);
+      if(translateListItem) {
+        await settranslateList([...translateList , JSON.parse(translateListItem)])
+        let stringData = JSON.stringify(translateList);
         await localStorage.setItem('translation',stringData);
       }
   }
   dataToJSON();
-}, [translateList,translateListItem]);
+}, [translateListItem,translateList]);
 
 useEffect(() => {
   const data = localStorage.getItem('translation');
   if (data) {
-    setTranslateListItem(JSON.parse(data))
+    settranslateList(JSON.parse(data))
   }
 },[])
 
 useEffect(() => {
-  localStorage.setItem('translation',JSON.stringify(translateListItem));
-},[translateListItem])
+  localStorage.setItem('translation',JSON.stringify(translateList));
+},[translateList])
 
 const switchLanguage = () => {
   if(fromLanguage && toLanguage ) {
@@ -115,7 +115,7 @@ axios({
     <CssBaseline />
     <Container>
       <Grid container className={classes.main} justifyContent="center" alignItems="center" flexdirection="column">
-        <Typography variant="h3" color="primary">TranslateList</Typography>
+        <Typography variant="h3" color="primary">translateListItem</Typography>
         <Typography variant="caption" color="textSecondary">Translate foreign words then add them to a list to memorize them ! </Typography>
       </Grid>
     </Container>
@@ -171,12 +171,12 @@ axios({
               </Grid>
         </Grid>
         <Grid container direction="row"  alignItems="center" spacing={2}>
-          {!translateListItem ?
+          {!translateList ?
             <Grid item>
               <Typography> Add translation to the list with the <AddBoxOutlinedIcon  fontSize="small" color="primary"/> Button !</Typography>
             </Grid>   :
-            translateListItem.map((e,index) => 
-            <TranslateListItem key={index} translatetext={e.fromText} translatedtext={e.translatedText} from={e.from} to={e.to} translateListItem={translateListItem} id={index} setTranslateListItem={setTranslateListItem}/> 
+            translateList.map((e,index) => 
+            <TranslateListItem key={index} translatetext={e.fromText} translatedtext={e.translatedText} from={e.from} to={e.to} translateList={translateList} id={index} settranslateList={settranslateList}/> 
             )
           }
         </Grid>
